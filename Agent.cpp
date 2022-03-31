@@ -7,7 +7,6 @@
 #include "Agent.h"
 #include <nlohmann/json.hpp>
 #include <utility>
-#include <iostream>
 
 using json = nlohmann::json;
 using namespace std;

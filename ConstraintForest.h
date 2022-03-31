@@ -1,6 +1,8 @@
-//
-// Created by Hebba Quraishi on 31.03.22.
-//
+/*
+ * Author: Hebba Quraishi
+ * Email: quraishi@tf.uni-freiburg.de
+ * The objective of this file is to implement a Constraint Forest
+*/
 
 #ifndef MT_MAPF_CONSTRAINTFOREST_H
 #define MT_MAPF_CONSTRAINTFOREST_H
