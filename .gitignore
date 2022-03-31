@@ -1,0 +1,5 @@
+.idea/
+.DS_Store
+cmake-build-debug-coverage/
+cmake-build-debug/
+.gitattributes
