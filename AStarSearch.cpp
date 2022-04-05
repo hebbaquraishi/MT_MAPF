@@ -9,8 +9,8 @@
 #include <iostream>
 #include <limits>
 
-AStarSearch::AStarSearch(Graph graph, const std::map<std::pair<int, int>,int>& h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
-    this->best_path = run(std::move(graph), h_values, constraints, start, goal, shift);
+AStarSearch::AStarSearch(Graph graph, const HValues& h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
+    run(std::move(graph), h_values, constraints, start, goal, shift);
 }
 
 map<int, int> AStarSearch::initialise_map_with_infinity(Graph graph){
@@ -32,17 +32,17 @@ for(auto &key : came_from){
 }
 
 
-vector<int> AStarSearch::reconstruct_path(map<int, int> came_from, pair<int, int> current){
+void AStarSearch::reconstruct_path(map<int, int> came_from, pair<int, int> current){
     vector<int> total_path;
-    total_path.emplace_back(current.first);
+    best_path.emplace_back(current.first);
     int id = current.first;
     vector<int> keys = get_keys(came_from);
     while (find(keys.begin(), keys.end(), id) != keys.end()){
         id = came_from[id];
-        total_path.emplace_back(id);
+        best_path.emplace_back(id);
     }
-    reverse(total_path.begin(),total_path.end());
-    return total_path;
+    reverse(best_path.begin(),best_path.end());
+    //return best_path;
 }
 
 
@@ -70,14 +70,14 @@ bool AStarSearch::in_constraints(std::vector<constraint> constraints, int vertex
     }
 }
 
-vector<int> AStarSearch::run(Graph graph, std::map<std::pair<int, int>,int> h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
+void AStarSearch::run(Graph graph, HValues h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
     priority_queue_sorted_by_f_value frontier;  //priority queue ordered by f-values. key := vertex id, value := f-value
     map<int, int> came_from; //key := id of current vertex, value:= id of current vertex's parent
     map<int, int> visited_at_time;  //key := vertex id, value:= time step at which this vertex was explored
     map<int, int> g_value = initialise_map_with_infinity(graph);// key:= vertex id, value := g-value
     map<int, int> f_value = initialise_map_with_infinity(graph);// key:= vertex id, value := f-value
     g_value[start] = 0;
-    f_value[start] = h_values[make_pair(start, goal)];
+    f_value[start] = h_values.get_h_values(make_pair(start, goal));
     frontier.push(make_pair(start, f_value[start]));
     visited_at_time[start] = shift;
 
@@ -86,7 +86,8 @@ vector<int> AStarSearch::run(Graph graph, std::map<std::pair<int, int>,int> h_va
         frontier.pop();
 
         if(current.first == goal){
-            return reconstruct_path(came_from, current);
+            reconstruct_path(came_from, current);
+            break;
         }
         for(auto& nhbr : graph.get_neighbours(current.first)){
             int temp = g_value[current.first] + 1;
@@ -99,7 +100,7 @@ vector<int> AStarSearch::run(Graph graph, std::map<std::pair<int, int>,int> h_va
                 else{
                     came_from[nhbr] = current.first;
                     g_value[nhbr] = temp;
-                    f_value[nhbr] = g_value[nhbr] + h_values[make_pair(nhbr, goal)];
+                    f_value[nhbr] = g_value[nhbr] + h_values.get_h_values(make_pair(nhbr, goal));
                     if(!in_frontier(nhbr, frontier)){
                         frontier.push(make_pair(nhbr, f_value[nhbr]));
                     }
@@ -107,7 +108,6 @@ vector<int> AStarSearch::run(Graph graph, std::map<std::pair<int, int>,int> h_va
             }
         }
     }
-    return vector<int>{};
 }
 
 

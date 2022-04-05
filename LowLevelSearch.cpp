@@ -8,7 +8,7 @@
 
 
 
-LowLevelSearch::LowLevelSearch(const Graph& graph, std::map<std::pair<int, int>,int> h_values, std::unordered_map<std::string, std::pair<int, std::vector<int>>> assignment, std::unordered_map<std::string, std::vector<constraint>> agent_constraints) {
+LowLevelSearch::LowLevelSearch(const Graph& graph, HValues h_values, std::unordered_map<std::string, std::pair<int, std::vector<int>>> assignment, std::unordered_map<std::string, std::vector<constraint>> agent_constraints) {
     for(auto& value: assignment){
         int shift = 0;
         for(int i = 0; i < (int)value.second.second.size()-1; i++){

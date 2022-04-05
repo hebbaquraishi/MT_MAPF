@@ -10,17 +10,18 @@
 #include "Graph.h"
 #include "Node.h"
 #include "GoalTraversalOrders.h"
+#include "HValues.h"
 
 
 class ConstraintForest {
     Node *root;
     Graph graph;
     std::vector<Agent> agents;
-    std::map<std::pair<int, int>,int> h_values;
+    HValues h_values;
     std::unordered_map<std::string, std::vector<int>> goal_traversal_order_ids = {}; //key:= agent name, value:= all goal traversal order ids
     std::unordered_map<int, std::pair<std::vector<int>, int>> goal_traversal_order = {}; //key:= goal traversal order id, value:= <goal traversal order, cost>
 public:
-    ConstraintForest(const Graph& graph, std::vector<Agent> agents, const std::map<std::pair<int, int>,int>& h_values);
+    ConstraintForest(const Graph& graph, std::vector<Agent> agents, const HValues& h_values);
     void initialise_root_node();
     void first_assignment();
     void next_assignment(Node* parent);

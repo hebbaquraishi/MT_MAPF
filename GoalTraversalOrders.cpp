@@ -6,7 +6,7 @@
 
 #include "GoalTraversalOrders.h"
 
-GoalTraversalOrders::GoalTraversalOrders(Graph graph, std::vector<Agent> agents, const std::map<std::pair<int, int>,int>& h_values){
+GoalTraversalOrders::GoalTraversalOrders(Graph graph, std::vector<Agent> agents, const HValues& h_values){
     std::vector<int> goal_ids;
     int start_id = -1;
     for(auto& agent: agents){
@@ -19,15 +19,15 @@ GoalTraversalOrders::GoalTraversalOrders(Graph graph, std::vector<Agent> agents,
     }
 }
 
-int GoalTraversalOrders::get_cost(std::map<std::pair<int, int>,int> h_values, std::vector<int> traversal_order){
+int GoalTraversalOrders::get_cost(HValues h_values, std::vector<int> traversal_order){
     int cost = 0;
-    for(int i = 0; i < (int)traversal_order.size()-2; i++){
-        cost += h_values[make_pair(traversal_order[i], traversal_order[i+1])];
+    for(int i = 0; i <= (int)traversal_order.size()-2; i++){
+        cost += h_values.get_h_values(make_pair(traversal_order[i], traversal_order[i+1]));
     }
     return cost;
 }
 
-int GoalTraversalOrders::brute_force_approach(Graph graph, Agent agent, const std::map<std::pair<int, int>,int>& h_values, std::vector<int> goal_ids, int start_id){
+int GoalTraversalOrders::brute_force_approach(Graph graph, Agent agent, const HValues& h_values, std::vector<int> goal_ids, int start_id){
     do{
         start_id += 1;
         this->agent_goal_traversal_order_ids[agent.name].push_back(start_id);

@@ -5,7 +5,7 @@
 */
 
 #include "HValues.h"
-
+#include <iostream>
 #include <utility>
 
 
@@ -55,8 +55,8 @@ void HValues::run_bfs(Graph graph, const std::pair<int, int>& root, std::queue<s
     run_bfs(graph, root,q, std::move(discovered));
 }
 
-std::map<std::pair<int, int>,int> HValues::get_h_values() {
-    return h_values;
+int HValues::get_h_values(std::pair<int, int> h) {
+    return h_values[h];
 }
 
 HValues::~HValues()= default;

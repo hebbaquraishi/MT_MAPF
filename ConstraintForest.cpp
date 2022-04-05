@@ -9,7 +9,7 @@
 #include <utility>
 #include <iostream>
 
-ConstraintForest::ConstraintForest(const Graph& graph, std::vector<Agent> agents,  const std::map<std::pair<int, int>,int>& h_values) {
+ConstraintForest::ConstraintForest(const Graph& graph, std::vector<Agent> agents, const HValues& h_values) {
     this->graph = graph;
     this->h_values = h_values;
     this->agents = agents;
@@ -76,7 +76,7 @@ Conflict ConstraintForest::validate_paths(Node *node){
     for(int i = 0; i < (int)node_solution.size()-1; i++){
         for(int j = i + 1; j < (int)node_solution.size(); j++){
             for(int k = 0; k < (int)node_solution[i].second.size(); k++){
-                if((node_solution[i].second)[k] == (node_solution[j].second)[k]){
+                if((node_solution[i].second)[k] == (node_solution[j].second)[k] && (node_solution[i].second)[k] !=-1){
                     Conflict c;
                     c.agent1 = node_solution[i].first;
                     c.agent2 = node_solution[j].first;

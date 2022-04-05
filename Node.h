@@ -9,7 +9,7 @@
 #include "Definitions.h"
 #include "Graph.h"
 #include "LowLevelSearch.h"
-
+#include "HValues.h"
 
 
 class Node {
@@ -31,15 +31,15 @@ public:
     int get_agent_configuration(const std::string& agent_name);
 
     void set_agent_goal_traversal_order(const std::string& agent_name, std::pair<int, std::vector<int>> assignment);
-    std::pair<int, std::vector<int>> get_agent_goal_traversal_order(std::string agent_name);
+    std::pair<int, std::vector<int>> get_agent_goal_traversal_order(const std::string& agent_name);
 
-    void compute_solution(const Graph& graph, const std::map<std::pair<int, int>,int>& h_values);
+    void compute_solution(const Graph& graph, const HValues& h_values);
 
     std::unordered_map<std::string, int> get_node_configuration();
     std::unordered_map<std::string, std::vector<int>> get_node_solution();
-    std::vector<int> get_agent_path(std::string agent_name);
-    int get_node_cost();
-    int get_largest_solution_cost();
+    std::vector<int> get_agent_path(const std::string& agent_name);
+    int get_node_cost() const;
+    int get_largest_solution_cost() const;
 
     bool is_root();
 };

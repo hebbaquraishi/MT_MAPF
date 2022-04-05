@@ -17,14 +17,15 @@ Graph::Graph(const std::string& map_location){
     input_map >> input_map_json;
     this->height = input_map_json["height"];
     this->width = input_map_json["width"];
-    initialise_vertices(input_map_json);
-    initialise_neighbours();
+    this->initialise_vertices(input_map_json);
+    this->initialise_neighbours();
 }
 
 void Graph::initialise_vertices(json input_map_json) {
     int id = 0;
     for(auto & i : input_map_json["vertices"]){
         Vertex v = Vertex(i[0], i[1]);
+        v.id = id;
         this->vertex_ids[id] = v;
         this->inverse_vertex_ids[v.name] = id;
         this->vertices.emplace_back(v);
@@ -40,7 +41,7 @@ void Graph::initialise_neighbours(){
             int x = v.get_coordinates().first + d.first;
             int y = v.get_coordinates().second + d.second;
             Vertex u = Vertex(x, y);
-            if((this->inverse_vertex_ids.find(u.name) != this->inverse_vertex_ids.end()) && x >= 0 && x < height && y >= 0 && y < width){
+            if((this->inverse_vertex_ids.find(u.name) != this->inverse_vertex_ids.end()) && x >= 0 && x < width && y >= 0 && y < height){
                 this->neighbours[inverse_vertex_ids[v.name]].push_back(inverse_vertex_ids[u.name]);
             }
             else{

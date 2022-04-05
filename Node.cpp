@@ -31,7 +31,7 @@ void Node::set_agent_goal_traversal_order(const std::string &agent_name, std::pa
     this->assignment[agent_name] = std::move(assignment);
 }
 
-void Node::compute_solution(const Graph& graph, const std::map<std::pair<int, int>,int>& h_values) {
+void Node::compute_solution(const Graph& graph, const HValues& h_values) {
     LowLevelSearch lowLevelSearch = LowLevelSearch(graph, h_values, assignment, agent_constraints);
     this->path = lowLevelSearch.get_agent_wise_solutions();
     this->cost = lowLevelSearch.get_total_solution_cost();
@@ -50,15 +50,15 @@ std::unordered_map<std::string, std::vector<int>> Node::get_node_solution(){
     return this->path;
 }
 
-int Node::get_node_cost(){
+int Node::get_node_cost() const{
     return this->cost;
 }
 
-int Node::get_largest_solution_cost(){
+int Node::get_largest_solution_cost() const{
     return this->largest_solution_cost;
 }
 
-std::pair<int, std::vector<int>> Node::get_agent_goal_traversal_order(std::string agent_name){
+std::pair<int, std::vector<int>> Node::get_agent_goal_traversal_order(const std::string& agent_name){
     return this->assignment[agent_name];
 }
 
@@ -66,6 +66,6 @@ bool Node::is_root(){
     return this->root;
 }
 
-std::vector<int> Node::get_agent_path(std::string agent_name){
+std::vector<int> Node::get_agent_path(const std::string& agent_name){
     return this->path[agent_name];
 }

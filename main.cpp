@@ -19,6 +19,7 @@ int main() {
 
     //Initialise the graph
     Graph graph = Graph(map_location);
+    cout<<"Graph initialised"<<endl;
 
     //Initialise agents
     json input_agents_json;
@@ -29,17 +30,19 @@ int main() {
     for (int i = 0; i< int(input_agents_json["names"].size()); i++){
         for (auto & j : input_agents_json["goal"][i]){
             Vertex v = Vertex(j[0], j[1]);
+            v.id = graph.get_vertex_id_from_name(v.name);
             goals.emplace_back(v);
         }
         Vertex start = Vertex(input_agents_json["initial"][i][0], input_agents_json["initial"][i][1]);
+        start.id = graph.get_vertex_id_from_name(start.name);
         Agent a = Agent(input_agents_json["names"][i], start, goals);
         agents.emplace_back(a);
         goals = {};
     }
 
     //Calculate h-values
-    HValues h = HValues(graph, agents);
-    std::map<std::pair<int, int>,int> h_values = h.get_h_values();
+    HValues h_values = HValues(graph, agents);
+    cout<<"h-values calculated"<<endl;
 
     //Run the code
     ConstraintForest forest = ConstraintForest(graph, agents, h_values);
