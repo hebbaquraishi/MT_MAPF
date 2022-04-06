@@ -33,16 +33,14 @@ for(auto &key : came_from){
 
 
 void AStarSearch::reconstruct_path(map<int, int> came_from, pair<int, int> current){
-    vector<int> total_path;
     best_path.emplace_back(current.first);
     int id = current.first;
-    vector<int> keys = get_keys(came_from);
+    vector<int> keys = get_keys(came_from); //came_from: n, n's parent, t=0
     while (find(keys.begin(), keys.end(), id) != keys.end()){
         id = came_from[id];
         best_path.emplace_back(id);
     }
     reverse(best_path.begin(),best_path.end());
-    //return best_path;
 }
 
 
