@@ -32,7 +32,8 @@ void Node::set_agent_goal_traversal_order(const std::string &agent_name, std::pa
 }
 
 void Node::compute_solution(const Graph& graph, const HValues& h_values) {
-    LowLevelSearch lowLevelSearch = LowLevelSearch(graph, h_values, assignment, agent_constraints);
+    std::unordered_map<std::string, std::vector<constraint>> my_agent_constraints = this->agent_constraints;
+    LowLevelSearch lowLevelSearch = LowLevelSearch(graph, h_values, assignment, my_agent_constraints);
     this->path = lowLevelSearch.get_agent_wise_solutions();
     this->cost = lowLevelSearch.get_total_solution_cost();
     this->largest_solution_cost = lowLevelSearch.get_largest_solution_cost();

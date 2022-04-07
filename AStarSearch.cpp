@@ -13,32 +13,32 @@ AStarSearch::AStarSearch(Graph graph, const HValues& h_values, const std::vector
     run(std::move(graph), h_values, constraints, start, goal, shift);
 }
 
-map<int, int> AStarSearch::initialise_map_with_infinity(Graph graph){
-    map<int, int> m;
+map<pair<int,int>, int> AStarSearch::initialise_map_with_infinity(Graph graph, int shift){
+    map<pair<int,int>, int> m;
     for(auto& v : graph.get_vertex_ids()){
-        m[v.first] = numeric_limits<int>::max();
+        m[make_pair(v.first, shift)] = numeric_limits<int>::max();
     }
     return m;
 }
 
 
-vector<int> AStarSearch::get_keys(const map<int, int>& came_from){
-    vector<int> keys={};
+vector<pair<int, int>> AStarSearch::get_keys(const map<pair<int,int>, pair<int,int>>& came_from){
+    vector<pair<int, int>> keys{};
     keys.reserve(came_from.size());
-for(auto &key : came_from){
+    for(auto &key : came_from){
         keys.emplace_back(key.first);
     }
     return keys;
 }
 
 
-void AStarSearch::reconstruct_path(map<int, int> came_from, pair<int, int> current){
+void AStarSearch::reconstruct_path(map<pair<int,int>, pair<int,int>> came_from, pair<int, int> current){
     best_path.emplace_back(current.first);
-    int id = current.first;
-    vector<int> keys = get_keys(came_from); //came_from: n, n's parent, t=0
+    pair<int, int> id = current;
+    vector<pair<int, int>> keys = get_keys(came_from);
     while (find(keys.begin(), keys.end(), id) != keys.end()){
         id = came_from[id];
-        best_path.emplace_back(id);
+        best_path.emplace_back(id.first);
     }
     reverse(best_path.begin(),best_path.end());
 }
@@ -47,7 +47,7 @@ void AStarSearch::reconstruct_path(map<int, int> came_from, pair<int, int> curre
 bool AStarSearch::in_frontier(int id, priority_queue_sorted_by_f_value frontier){
     priority_queue_sorted_by_f_value f = std::move(frontier);
     while (!f.empty()){
-        if(f.top().first == id){
+        if(f.top().first.first == id){
             return true;
         }
         f.pop();
@@ -70,37 +70,41 @@ bool AStarSearch::in_constraints(std::vector<constraint> constraints, int vertex
 
 void AStarSearch::run(Graph graph, HValues h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
     priority_queue_sorted_by_f_value frontier;  //priority queue ordered by f-values. key := vertex id, value := f-value
-    map<int, int> came_from; //key := id of current vertex, value:= id of current vertex's parent
-    map<int, int> visited_at_time;  //key := vertex id, value:= time step at which this vertex was explored
-    map<int, int> g_value = initialise_map_with_infinity(graph);// key:= vertex id, value := g-value
-    map<int, int> f_value = initialise_map_with_infinity(graph);// key:= vertex id, value := f-value
-    g_value[start] = 0;
-    f_value[start] = h_values.get_h_values(make_pair(start, goal));
-    frontier.push(make_pair(start, f_value[start]));
-    visited_at_time[start] = shift;
+    map<pair<int,int>, pair<int,int>> came_from; //key := id of current vertex, value:= id of current vertex's parent
+    //map<int, int> visited_at_time;  //key := vertex id, value:= time step at which this vertex was explored
+    map<pair<int,int>, int> g_value = initialise_map_with_infinity(graph, shift);// key:= vertex id, value := g-value
+    map<pair<int,int>, int> f_value = initialise_map_with_infinity(graph, shift);// key:= vertex id, value := f-value
+    g_value[make_pair(start, shift)] = 0;
+    f_value[make_pair(start, shift)] = h_values.get_h_values(make_pair(start, goal));
+    frontier.push(make_pair(make_pair(start, shift), f_value[make_pair(start, shift)]));
+    //visited_at_time[start] = shift;
 
     while (!frontier.empty()){
-        pair<int, int> current = frontier.top(); //key := vertex id, value := f-value
+        std::pair<std::pair<int, int>, int> current = frontier.top(); //key := <vertex id, time step>, value := f-value
         frontier.pop();
 
-        if(current.first == goal){
-            reconstruct_path(came_from, current);
+        if(current.first.first == goal){
+            reconstruct_path(came_from, current.first);
             break;
         }
-        for(auto& nhbr : graph.get_neighbours(current.first)){
+        for(auto& nhbr : graph.get_neighbours(current.first.first)){
             int temp = g_value[current.first] + 1;
-            if(temp < g_value[nhbr]){
-                int time_step = visited_at_time[current.first];
-                visited_at_time[nhbr] = time_step + 1;
-                if(in_constraints(constraints, nhbr, visited_at_time[nhbr])){
+            if(temp < g_value[make_pair(nhbr, shift)]){
+                int next_time_step = current.first.second + 1;
+                //visited_at_time[nhbr] = time_step + 1;
+                if(in_constraints(constraints, nhbr, next_time_step)){
+                    came_from[make_pair(current.first.first, next_time_step)] = current.first;
+                    g_value[make_pair(current.first.first, next_time_step)] = temp;
+                    f_value[make_pair(current.first.first, next_time_step)] = g_value[make_pair(current.first.first, next_time_step)] + h_values.get_h_values(make_pair(current.first.first, goal));
+                    frontier.push(make_pair(make_pair(current.first.first, next_time_step), f_value[make_pair(current.first.first, next_time_step)]));
                     continue;
                 }
                 else{
-                    came_from[nhbr] = current.first;
-                    g_value[nhbr] = temp;
-                    f_value[nhbr] = g_value[nhbr] + h_values.get_h_values(make_pair(nhbr, goal));
+                    came_from[make_pair(nhbr, next_time_step)] = current.first;
+                    g_value[make_pair(nhbr, next_time_step)] = temp;
+                    f_value[make_pair(nhbr, next_time_step)] = g_value[make_pair(nhbr, next_time_step)] + h_values.get_h_values(make_pair(nhbr, goal));
                     if(!in_frontier(nhbr, frontier)){
-                        frontier.push(make_pair(nhbr, f_value[nhbr]));
+                        frontier.push(make_pair(make_pair(nhbr, next_time_step), f_value[make_pair(nhbr, next_time_step)]));
                     }
                 }
             }

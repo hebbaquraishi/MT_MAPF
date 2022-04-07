@@ -132,6 +132,7 @@ void ConstraintForest::run() {
 
     while(!open_list.empty()){
         Node* current_node = open_list.top();
+        open_list.pop();
         Conflict conflict = validate_paths(current_node);
         if(conflict.timestamp == -1){
             //we have found a solution
