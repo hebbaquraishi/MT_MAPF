@@ -43,7 +43,7 @@ int Node::get_agent_configuration(const std::string& agent_name){
     return this->configuration[agent_name];
 }
 
-std::unordered_map<std::string, int> Node::get_node_configuration(){
+[[maybe_unused]] std::unordered_map<std::string, int> Node::get_node_configuration(){
     return this->configuration;
 }
 
