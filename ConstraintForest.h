@@ -24,9 +24,9 @@ public:
     ConstraintForest(const Graph& graph, std::vector<Agent> agents, const HValues& h_values);
     void initialise_root_node();
     void first_assignment();
-    void next_assignment(Node* parent);
+    void next_assignment(Node* parent, const string& agent_name);
     Conflict validate_paths(Node *node);
-    Node* create_new_root_node(Node* node);
+    vector<Node*> create_new_root_node(Node* node);
     std::vector<Node*> create_new_children_nodes(Node* node, const Conflict& conflict);
     void run();
 

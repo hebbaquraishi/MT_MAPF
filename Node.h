@@ -35,21 +35,20 @@ public:
 
     void compute_solution(const Graph& graph, const HValues& h_values);
 
-    std::unordered_map<std::string, int> get_node_configuration();
+    [[maybe_unused]] std::unordered_map<std::string, int> get_node_configuration();
     std::unordered_map<std::string, std::vector<int>> get_node_solution();
     std::vector<int> get_agent_path(const std::string& agent_name);
-    int get_node_cost() const;
-    int get_largest_solution_cost() const;
+    [[nodiscard]] int get_node_cost() const;
+    [[nodiscard]] int get_largest_solution_cost() const;
 
     bool is_root();
 };
 
 struct sort_node_by_cost {
     bool operator()(Node *x, Node *y){
-        return x->get_node_cost() > y->get_node_cost();
+        return x->get_node_cost() < y->get_node_cost();
     }
 };
-typedef std::priority_queue<Node*, std::vector<Node*>, sort_node_by_cost> priority_queue_sorted_by_node_cost; //priority queue ordered by node costs. key := node id, value := f-value
 
 
 

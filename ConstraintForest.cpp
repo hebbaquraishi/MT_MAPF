@@ -37,25 +37,14 @@ void ConstraintForest::first_assignment(){
     }
 }
 
-void ConstraintForest::next_assignment(Node* node){
-    int min = INT_MAX;
-    int my_ptr = -1;
-    int min_goal_id = -1;
-    string agent_name;
-    for(auto& agent: node->get_node_configuration()){
-        if(agent.second < (int)goal_traversal_order_ids[agent.first].size()-1){
-            int next_ptr = agent.second + 1;
-            int next_goal_id = goal_traversal_order_ids[agent.first][next_ptr];
-            if(goal_traversal_order[next_goal_id].second < min){
-                min = goal_traversal_order[next_goal_id].second;
-                min_goal_id = next_goal_id;
-                agent_name = agent.first;
-                my_ptr = next_ptr;
-            }
-        }
+void ConstraintForest::next_assignment(Node* node, const string& agent_name){
+    int config = node->get_agent_configuration(agent_name);
+    if(config < (int)goal_traversal_order_ids[agent_name].size()-1){
+        int next_ptr = config + 1;
+        int next_goal_id = goal_traversal_order_ids[agent_name][next_ptr];
+        node->set_agent_configuration(agent_name, next_ptr);
+        node->set_agent_goal_traversal_order(agent_name, make_pair(next_goal_id, goal_traversal_order[next_goal_id].first));
     }
-    node->set_agent_configuration(agent_name, my_ptr);
-    node->set_agent_goal_traversal_order(agent_name, make_pair(min_goal_id, goal_traversal_order[min_goal_id].first));
 }
 
 
@@ -90,18 +79,27 @@ Conflict ConstraintForest::validate_paths(Node *node){
     return Conflict{};
 }
 
-Node* ConstraintForest::create_new_root_node(Node* node){
-    Node* new_root = new Node();
-    for(auto& agent: this->agents){
-        new_root->set_agent_constraints(agent.name, {});
-        new_root->set_agent_configuration(agent.name, node->get_agent_configuration(agent.name));
-        new_root->set_agent_goal_traversal_order(agent.name, node->get_agent_goal_traversal_order(agent.name));
+vector<Node*> ConstraintForest::create_new_root_node(Node* node){
+    vector<Node*> new_roots;
+    int num_of_agents = (int)this->agents.size();
+    for(int i = 0; i < num_of_agents; i++){
+        Node* new_root = new Node();
+        for(auto& agent: this->agents){
+            new_root->set_agent_constraints(agent.name, {});    //root has empty set of constraints
+            new_root->set_agent_configuration(agent.name, node->get_agent_configuration(agent.name));
+            new_root->set_agent_goal_traversal_order(agent.name, node->get_agent_goal_traversal_order(agent.name));
+            new_root->assign_parent(node);
+            new_root->set_as_root();
+        }
+        new_roots.push_back(new_root);
     }
-    new_root->assign_parent(node);
-    next_assignment(new_root);
-    new_root->set_as_root();
-    new_root->compute_solution(this->graph, this->h_values);
-    return new_root;
+    int i = 0;
+    for(auto& agent: this->agents){
+        next_assignment(new_roots[i], agent.name);
+        new_roots[i]->compute_solution(this->graph, this->h_values);
+        i += 1;
+    }
+    return new_roots;
 }
 
 
@@ -127,12 +125,12 @@ std::vector<Node*> ConstraintForest::create_new_children_nodes(Node* node, const
 
 
 void ConstraintForest::run() {
-    priority_queue_sorted_by_node_cost open_list;
-    open_list.push(this->root);
+    vector<Node*> open_list;
+    open_list.emplace_back(this->root);
 
     while(!open_list.empty()){
-        Node* current_node = open_list.top();
-        open_list.pop();
+        Node* current_node = open_list.front();
+        open_list.erase(open_list.begin());
         Conflict conflict = validate_paths(current_node);
         if(conflict.timestamp == -1){
             //we have found a solution
@@ -158,13 +156,16 @@ void ConstraintForest::run() {
 
         if(current_node->is_root()){
             //add new root to the forest
-            Node* new_root = this->create_new_root_node(current_node);
-            open_list.push(new_root);
-        }
+            vector<Node*> new_roots = this->create_new_root_node(current_node);
+            for(auto& new_root : new_roots){
+                open_list.emplace_back(new_root);
+            }
 
+        }
         std::vector<Node*> children_nodes = create_new_children_nodes(current_node, conflict);
-        open_list.push(children_nodes[0]);
-        open_list.push(children_nodes[1]);
+        open_list.emplace_back(children_nodes[0]);
+        open_list.emplace_back(children_nodes[1]);
+        std::sort(open_list.begin(), open_list.end(), sort_node_by_cost());
     }
 }
 
