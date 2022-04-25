@@ -11,9 +11,12 @@
 #include "Node.h"
 #include "GoalTraversalOrders.h"
 #include "HValues.h"
+#include <chrono>
+
 
 
 class ConstraintForest {
+    std::chrono::steady_clock::time_point start{};
     Node *root;
     Graph graph;
     std::vector<Agent> agents;

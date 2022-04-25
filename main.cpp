@@ -6,6 +6,7 @@
 #include "Graph.h"
 #include "HValues.h"
 #include "ConstraintForest.h"
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -13,13 +14,15 @@ using json = nlohmann::json;
 
 int main() {
     //Provide locations of the map and agents json files
-    string map_location = "/Users/hebbaquraishi/Desktop/MAPF/Automation Scripts/results/my_map.json";
-    string agent_location = "/Users/hebbaquraishi/Desktop/MAPF/Automation Scripts/results/my_agents.json";
+    string map_location = "/Users/hebbaquraishi/Desktop/MT_MAPF/results/maps/random-32-32-20.json";
+    string agent_location = "/Users/hebbaquraishi/Desktop/MT_MAPF/results/current/my_agents.json";
+
+    cout<<"*********************************** MT_MAPF ***********************************"<<endl;
 
 
     //Initialise the graph
     Graph graph = Graph(map_location);
-    cout<<"Graph initialised"<<endl;
+    cout<<"\nGraph initialised"<<endl;
 
     //Initialise agents
     json input_agents_json;
@@ -47,6 +50,5 @@ int main() {
     //Run the code
     ConstraintForest forest = ConstraintForest(graph, agents, h_values);
     forest.run();
-
     return 0;
 }

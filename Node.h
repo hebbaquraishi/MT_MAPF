@@ -16,7 +16,7 @@ class Node {
     bool root = false;
     int cost = 0;
     int largest_solution_cost = 0;
-    Node* parent = nullptr;
+    [[maybe_unused]] Node* parent = nullptr;
     std::unordered_map<std::string, std::vector<constraint>> agent_constraints{}; //key:= agent name, value:= agent constraints
     std::unordered_map<std::string, int> configuration{};        //key:= agent name, value := ptr to current goal traversal order id
     std::unordered_map<std::string, std::pair<int, std::vector<int>>> assignment{}; //key:= agent name, value:= <goal traversal order id, goal traversal order>
