@@ -160,6 +160,7 @@ void ConstraintForest::run(string results_location) {
         if(conflict.timestamp == -1){
             //we have found a solution
             json result_file;
+            result_file["preprocessing_time"] = (int)preprocessing;
             result_file["agent_count"] = (int)agents.size();
             result_file["goals_per_agent"] = (int)agents[0].get_goals().size();
             auto stop = std::chrono::high_resolution_clock::now();
