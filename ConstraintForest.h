@@ -17,6 +17,7 @@
 
 class ConstraintForest {
     std::chrono::steady_clock::time_point start{};
+    long preprocessing;
     Node *root;
     Graph graph;
     std::vector<Agent> agents;
@@ -31,7 +32,7 @@ public:
     Conflict validate_paths(Node *node);
     vector<Node*> create_new_root_node(Node* node);
     std::vector<Node*> create_new_children_nodes(Node* node, const Conflict& conflict);
-    void run();
+    void run(string results_location);
 
 
 };

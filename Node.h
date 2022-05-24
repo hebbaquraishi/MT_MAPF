@@ -25,7 +25,8 @@ public:
     Node() = default;
     void set_as_root();
     void assign_parent(Node* parent);
-    void set_agent_constraints(const std::string& agent_name, constraint c);
+    void set_agent_constraints(const std::string& agent_name, const std::vector<constraint>& constraints);
+    std::vector<constraint> get_agent_constraints(const std::string& agent_name);
 
     void set_agent_configuration(const std::string& agent_name, int ptr_index);
     int get_agent_configuration(const std::string& agent_name);

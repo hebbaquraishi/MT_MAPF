@@ -14,10 +14,11 @@ using json = nlohmann::json;
 
 int main() {
     //Provide locations of the map and agents json files
-    string map_location = "/Users/hebbaquraishi/Desktop/MT_MAPF/results/maps/random-32-32-20.json";
-    string agent_location = "/Users/hebbaquraishi/Desktop/MT_MAPF/results/current/my_agents.json";
+    string map_location = "/Users/hebbaquraishi/Desktop/results/room_64/maps/room-64-64-8.json";
+    string agent_location = "/Users/hebbaquraishi/Desktop/results/room_64/current/my_agents.json";
+    string results_location = "/Users/hebbaquraishi/Desktop/results/room_64/results_room_64.json";
 
-    cout<<"*********************************** MT_MAPF ***********************************"<<endl;
+    cout<<"\n*********************************** MT_MAPF ***********************************"<<endl;
 
 
     //Initialise the graph
@@ -49,6 +50,6 @@ int main() {
 
     //Run the code
     ConstraintForest forest = ConstraintForest(graph, agents, h_values);
-    forest.run();
+    forest.run(results_location);
     return 0;
 }

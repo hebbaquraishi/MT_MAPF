@@ -18,9 +18,17 @@ void Node::assign_parent(Node *parent) {
 }
 
 
-void Node::set_agent_constraints(const std::string& agent_name, constraint c) {
-    this->agent_constraints[agent_name].emplace_back(c);
+void Node::set_agent_constraints(const std::string& agent_name, const std::vector<constraint>& constraints) {
+    for(auto& c : constraints){
+        this->agent_constraints[agent_name].emplace_back(c);
+    }
 }
+
+std::vector<constraint> Node::get_agent_constraints(const std::string& agent_name){
+    return this->agent_constraints[agent_name];
+}
+
+
 
 void Node::set_agent_configuration(const std::string& agent_name, int ptr_index){
     this->configuration[agent_name] = ptr_index;
