@@ -27,6 +27,8 @@ public:
     int get_vertex_id_from_name(const std::string& name);
     std::vector<int> get_neighbours(int id);
     std::unordered_map<int, Vertex> get_vertex_ids();
+    std::unordered_map<int, std::vector<int>> get_all_neighbours();
+    std::unordered_map<std::string, int> get_inverse_vertex_ids();
 };
 
 

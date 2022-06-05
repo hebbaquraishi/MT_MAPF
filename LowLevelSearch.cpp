@@ -7,12 +7,11 @@
 #include "LowLevelSearch.h"
 
 
-
-LowLevelSearch::LowLevelSearch(const Graph& graph, HValues h_values, std::unordered_map<std::string, std::pair<int, std::vector<int>>> assignment, std::unordered_map<std::string, std::vector<constraint>> agent_constraints) {
+LowLevelSearch::LowLevelSearch(const std::unordered_map<int, Vertex>& vertex_ids, const std::unordered_map<int, std::vector<int>>& neighbours, const std::map<std::pair<int, int>,int>& h_values, std::unordered_map<std::string, std::pair<int, std::vector<int>>> assignment, std::unordered_map<std::string, std::vector<constraint>> agent_constraints) {
     for(auto& value: assignment){
         int shift = 0;
         for(int i = 0; i < (int)value.second.second.size()-1; i++){
-            AStarSearch a_star = AStarSearch(graph, h_values, agent_constraints[value.first], value.second.second[i], value.second.second[i+1], shift);
+            AStarSearch a_star = AStarSearch(vertex_ids, neighbours, h_values, agent_constraints[value.first], value.second.second[i], value.second.second[i+1], shift);
             vector<int> path = a_star.get_best_path();
             if(i == 0){
                 shift = shift + (int)(path.size()-1);

@@ -34,7 +34,7 @@ public:
     void set_agent_goal_traversal_order(const std::string& agent_name, std::pair<int, std::vector<int>> assignment);
     std::pair<int, std::vector<int>> get_agent_goal_traversal_order(const std::string& agent_name);
 
-    void compute_solution(const Graph& graph, const HValues& h_values);
+    void compute_solution(const std::unordered_map<int, Vertex>& vertex_ids, const std::unordered_map<int, std::vector<int>>& neighbours, const std::map<std::pair<int, int>,int>& h_values);
 
     [[maybe_unused]] std::unordered_map<std::string, int> get_node_configuration();
     std::unordered_map<std::string, std::vector<int>> get_node_solution();

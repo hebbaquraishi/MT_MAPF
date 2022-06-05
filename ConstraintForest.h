@@ -21,18 +21,18 @@ class ConstraintForest {
     Node *root;
     Graph graph;
     std::vector<Agent> agents;
-    HValues h_values;
+    std::map<std::pair<int, int>,int> h_values;
     std::unordered_map<std::string, std::vector<int>> goal_traversal_order_ids = {}; //key:= agent name, value:= all goal traversal order ids
     std::unordered_map<int, std::pair<std::vector<int>, int>> goal_traversal_order = {}; //key:= goal traversal order id, value:= <goal traversal order, cost>
 public:
-    ConstraintForest(const Graph& graph, std::vector<Agent> agents, const HValues& h_values);
+    ConstraintForest(const Graph& graph, std::vector<Agent> agents, const std::map<std::pair<int, int>,int>& h_values);
     void initialise_root_node();
     void first_assignment();
     void next_assignment(Node* parent, const string& agent_name);
     Conflict validate_paths(Node *node);
     vector<Node*> create_new_root_node(Node* node);
     std::vector<Node*> create_new_children_nodes(Node* node, const Conflict& conflict);
-    void run(string results_location);
+    void run(const string& results_location);
 
 
 };

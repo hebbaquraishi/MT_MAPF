@@ -67,3 +67,10 @@ vector<int> Graph::get_neighbours(int id) {
 std::unordered_map<int, Vertex> Graph::get_vertex_ids(){
     return this->vertex_ids;
 }
+
+std::unordered_map<int, std::vector<int>> Graph::get_all_neighbours(){
+    return this->neighbours;
+}
+std::unordered_map<std::string, int> Graph::get_inverse_vertex_ids(){
+    return this->inverse_vertex_ids;
+}

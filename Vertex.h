@@ -12,7 +12,7 @@
 
 
 class Vertex {
-        int x_coordinate{};
+    int x_coordinate{};
     int y_coordinate{};
 public:
     int id{};

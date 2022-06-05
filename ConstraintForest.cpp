@@ -10,16 +10,17 @@
 #include <iostream>
 #include <fstream>
 
-ConstraintForest::ConstraintForest(const Graph& graph, std::vector<Agent> agents, const HValues& h_values) {
+ConstraintForest::ConstraintForest(const Graph& graph, std::vector<Agent> agents, const std::map<std::pair<int, int>,int>& h_values) {
     this->start = std::chrono::high_resolution_clock::now();
     this->graph = graph;
     this->h_values = h_values;
     this->agents = agents;
-    auto* gto = new GoalTraversalOrders(graph, std::move(agents), this->h_values);
+    auto* gto = new GoalTraversalOrders(this->graph.get_inverse_vertex_ids(), std::move(agents), h_values);
     this->goal_traversal_order_ids = gto->get_agent_goal_traversal_order_ids();
     this->goal_traversal_order = gto->get_goal_traversal_orders();
     this->preprocessing = (duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start)).count();
     delete gto;
+    cout<<"Goal traversal orders calculated!"<<endl;
     this->start = std::chrono::high_resolution_clock::now();
     this->root = new Node();
     initialise_root_node();
@@ -28,8 +29,9 @@ ConstraintForest::ConstraintForest(const Graph& graph, std::vector<Agent> agents
 void ConstraintForest::initialise_root_node(){
     this->root->set_as_root();
     first_assignment();
-    this->root->compute_solution(this->graph, this->h_values);
+    this->root->compute_solution(this->graph.get_vertex_ids(), this->graph.get_all_neighbours() ,this->h_values);
     this->root->assign_parent(nullptr);
+    cout<<"Root node initialised!"<<endl;
 }
 
 void ConstraintForest::first_assignment(){
@@ -99,7 +101,7 @@ vector<Node*> ConstraintForest::create_new_root_node(Node* node){
     int i = 0;
     for(auto& agent: this->agents){
         next_assignment(new_roots[i], agent.name);
-        new_roots[i]->compute_solution(this->graph, this->h_values);
+        new_roots[i]->compute_solution(this->graph.get_vertex_ids(), this->graph.get_all_neighbours() ,this->h_values);
         i += 1;
     }
     return new_roots;
@@ -124,14 +126,14 @@ std::vector<Node*> ConstraintForest::create_new_children_nodes(Node* node, const
             child_node->set_agent_constraints(agent.name, node->get_agent_constraints(agent.name));
         }
         child_node->assign_parent(node);
-        child_node->compute_solution(this->graph, this->h_values);
+        child_node->compute_solution(this->graph.get_vertex_ids(), this->graph.get_all_neighbours() ,this->h_values);
         children_nodes.emplace_back(child_node);
     }
     return children_nodes;
 }
 
 
-void ConstraintForest::run(string results_location) {
+void ConstraintForest::run(const string& results_location) {
     vector<Node*> open_list;
     open_list.emplace_back(this->root);
     int num_nodes_expanded = 0, num_conflicts = 0;
