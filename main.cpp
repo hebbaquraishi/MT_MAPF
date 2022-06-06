@@ -14,17 +14,18 @@ using json = nlohmann::json;
 
 int main() {
     //Provide locations of the map and agents json files
-    //string map_location = "/Users/hebbaquraishi/Desktop/results/empty_16/maps/empty-16-16.json";
-    //string agent_location = "//Users/hebbaquraishi/Desktop/results/empty_16/configs/my_agents_agent_4_goals_2_config_0.json";
-    //string results_location = "//Users/hebbaquraishi/Desktop/results/empty_16/test.json";
+    string map_location = "/Users/hebbaquraishi/Desktop/results/empty-16-16/maps/empty-16-16.json";
+    string agent_location = "/Users/hebbaquraishi/Desktop/results/empty-16-16/current/my_agents.json";
+    string results_location = "/Users/hebbaquraishi/Desktop/results/empty-16-16/results.json";
 
-    //string map_location = "/Users/hebbaquraishi/Desktop/results/random_32/maps/random-32-32-20.json";
-    //string agent_location = "/Users/hebbaquraishi/Desktop/results/random_32/current/my_agents.json";
-    //string results_location = "/Users/hebbaquraishi/Desktop/results/random_32/results_2_5_goals_random_32.json";
 
-    string map_location = "/Users/hebbaquraishi/Desktop/results/room_64/maps/room-64-64-8.json";
-    string agent_location = "/Users/hebbaquraishi/Desktop/results/room_64/configs/my_agents_agent_10_goals_5_config_3.json";
-    string results_location = "/Users/hebbaquraishi/Desktop/results/test.json";
+    //string map_location = "/Users/hebbaquraishi/Desktop/results/random-32-32-20/maps/random-32-32-20.json";
+    //string agent_location = "/Users/hebbaquraishi/Desktop/results/random-32-32-20/current/my_agents.json";
+    //string results_location = "/Users/hebbaquraishi/Desktop/results/random-32-32-20/results.json";
+
+    //string map_location = "/Users/hebbaquraishi/Desktop/results/room-64-64-8/maps/room-64-64-8.json";
+    //string agent_location = "/Users/hebbaquraishi/Desktop/results/room-64-64-8/current/my_agents.json";
+    //string results_location = "/Users/hebbaquraishi/Desktop/results/room-64-64-8/results.json";
 
 
     cout<<"\n*********************************** MT_MAPF ***********************************"<<endl;

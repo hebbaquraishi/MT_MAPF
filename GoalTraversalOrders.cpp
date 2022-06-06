@@ -5,6 +5,7 @@
 */
 
 #include "GoalTraversalOrders.h"
+#include <iostream>
 
 GoalTraversalOrders::GoalTraversalOrders(const std::unordered_map<std::string, int>& inverse_vertex_ids, std::vector<Agent> agents, const std::map<std::pair<int, int>,int>& h_values){
     this->inverse_vertex_ids = inverse_vertex_ids;
@@ -23,7 +24,9 @@ GoalTraversalOrders::GoalTraversalOrders(const std::unordered_map<std::string, i
 int GoalTraversalOrders::get_cost(const std::map<std::pair<int, int>,int>& h_values, std::vector<int> traversal_order){
     int cost = 0;
     for(int i = 0; i <= (int)traversal_order.size()-2; i++){
-        cost += h_values.at(make_pair(traversal_order[i], traversal_order[i+1]));
+        if (traversal_order[i] != traversal_order[i+1]){
+            cost += h_values.at(make_pair(traversal_order[i], traversal_order[i+1]));
+        }
     }
     return cost;
 }
@@ -31,6 +34,7 @@ int GoalTraversalOrders::get_cost(const std::map<std::pair<int, int>,int>& h_val
 int GoalTraversalOrders::brute_force_approach(Agent agent, const std::map<std::pair<int, int>,int>& h_values, std::vector<int> goal_ids, int start_id){
     do{
         start_id += 1;
+        cout<<"Found GTO: "<<start_id<<endl;
         this->agent_goal_traversal_order_ids[agent.name].push_back(start_id);
         std::vector<int> temp = goal_ids;
         temp.insert(temp.begin(), this->inverse_vertex_ids[agent.get_init_loc().name]);

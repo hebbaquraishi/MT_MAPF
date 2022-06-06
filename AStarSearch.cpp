@@ -6,6 +6,7 @@
 
 #include "AStarSearch.h"
 #include <utility>
+#include <iostream>
 #include <limits>
 
 AStarSearch::AStarSearch(const std::unordered_map<int, Vertex>& vertex_ids, const std::unordered_map<int, std::vector<int>>& neighbours, const std::map<std::pair<int, int>,int>& h_values, const std::vector<constraint>& constraints, int start, int goal, int shift){
@@ -76,7 +77,13 @@ void AStarSearch::run(const std::map<std::pair<int, int>,int>& h_values, const s
     map<pair<int,int>, int> g_value = initialise_map_with_infinity(shift);// key:= vertex id, value := g-value
     map<pair<int,int>, int> f_value = initialise_map_with_infinity(shift);// key:= vertex id, value := f-value
     g_value[make_pair(start, shift)] = 0;
-    f_value[make_pair(start, shift)] = h_values.at(make_pair(start, goal));
+    if(start == goal){
+        f_value[make_pair(start, shift)] = 0;
+    }
+    else{
+        f_value[make_pair(start, shift)] = h_values.at(make_pair(start, goal));
+    }
+
 
 
     frontier.push(make_pair(make_pair(start, shift), f_value[make_pair(start, shift)]));
@@ -98,7 +105,13 @@ void AStarSearch::run(const std::map<std::pair<int, int>,int>& h_values, const s
                 if(in_constraints(constraints, nhbr, next_time_step)){
                     came_from[make_pair(current.first.first, next_time_step)] = current.first;
                     g_value[make_pair(current.first.first, next_time_step)] = temp;
-                    f_value[make_pair(current.first.first, next_time_step)] = g_value[make_pair(current.first.first, next_time_step)] + h_values.at(make_pair(current.first.first, goal));
+                    if(current.first.first == goal){
+                        f_value[make_pair(current.first.first, next_time_step)] = g_value[make_pair(current.first.first, next_time_step)];
+                    }
+                    else{
+                        f_value[make_pair(current.first.first, next_time_step)] = g_value[make_pair(current.first.first, next_time_step)] + h_values.at(make_pair(current.first.first, goal));
+                    }
+
                     frontier.push(make_pair(make_pair(current.first.first, next_time_step), f_value[make_pair(current.first.first, next_time_step)]));
                     continue;
                 }
